@@ -33,9 +33,10 @@ def index():
         curs.execute("INSERT INTO todos (todo, deadline, status) VALUES ((?), (?), (?))", (todo, deadline, status))
         conn.commit()
         todos = get_all_todos(curs, 'pending')
+    done = get_total_todos(curs, 'done')
     #close database connection
     conn.close()
-    return render_template('index.html', to_dos = todos)    
+    return render_template('index.html', to_dos = todos, done=done)    
 
 @app.route('/reminder/<action>/<id>', methods=['GET','POST'])
 def edit(action, id):
@@ -74,6 +75,11 @@ def get_all_todos(curs, status):
         if(not scheduler.get_job(str(todo['id']))):
             scheduler.add_job(id=str(todo['id']), func=give_reminder, trigger='date', run_date=todo['deadline'], args=[todo['todo']])
     return todos
+
+def get_total_todos(curs, status):
+    if status=='done':
+        count = curs.execute("SELECT COUNT(*) FROM todos WHERE status=(?)", ("done",)).fetchone()[0]
+    return count
 
 def give_reminder(todo):
     sense.show_message(todo)
