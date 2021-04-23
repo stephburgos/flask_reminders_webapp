@@ -1,11 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for
 from sense_hat import SenseHat 
 import sqlite3 
+from flask_apscheduler import APScheduler
+import time
+
 
 sense = SenseHat()
 sense.low_light = True
 
+
 app = Flask(__name__)
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -16,7 +24,7 @@ def index():
     todos = []
     
     if request.method == 'GET':
-       todos = getAllTodos(curs, 'pending')
+       todos = get_all_todos(curs, 'pending')
     else: 
         #get posted form data using names assigned in HTML
         todo = request.form['reminder']
@@ -24,7 +32,7 @@ def index():
         status = "pending"
         curs.execute("INSERT INTO todos (todo, deadline, status) VALUES ((?), (?), (?))", (todo, deadline, status))
         conn.commit()
-        todos = getAllTodos(curs)
+        todos = get_all_todos(curs, 'pending')
     #close database connection
     conn.close()
     return render_template('index.html', to_dos = todos)    
@@ -34,20 +42,25 @@ def edit(action, id):
     #connect to database
     conn = sqlite3.connect('./static/data/toDos.db')
     curs = conn.cursor()
+    str_id = str(id)
     if action == 'delete':
         curs.execute("DELETE FROM todos WHERE rowid=(?)", (id,))
+        if(scheduler.get_job(str_id)):
+            scheduler.remove_job(str_id)
     elif action == 'complete':
         curs.execute("UPDATE todos SET status=(?) WHERE rowid=(?)", ('done',id))
+        if(scheduler.get_job(str_id)):
+            scheduler.remove_job(str_id)
     conn.commit()
     conn.close()
     return redirect(url_for('index'))
 
 @app.route('/all')
 def all():
-    todos = getAllTodos(curs, 'all') 
+    todos = get_all_todos(curs, 'all') 
     return render_template('index.html', to_dos = todos)    
 
-def getAllTodos(curs, status):
+def get_all_todos(curs, status):
     todos = []
     rows = ''
     if status == 'all':
@@ -57,7 +70,13 @@ def getAllTodos(curs, status):
     for row in rows:
         todo = {'id': row[0], 'todo': row[1], 'deadline':row[2]}
         todos.append(todo)
+        #Schedule task - tasks already scheduled will be ignored
+        if(not scheduler.get_job(str(todo['id']))):
+            scheduler.add_job(id=str(todo['id']), func=give_reminder, trigger='date', run_date=todo['deadline'], args=[todo['todo']])
     return todos
+
+def give_reminder(todo):
+    sense.show_message(todo)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
