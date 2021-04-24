@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Tasks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            padding: 0px;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .main {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+        }
+        
+        .greetings {
+            width: 100%;
+            color: white;
+            display: flex;
+            flex-direction: row;
+            padding: 20px;
+            padding-bottom: 70px;
+            background-color:#a487e7;
+        }
+
+        .hello {
+            width: 75%;
+            overflow-wrap: normal;
+            margin-left: 20px;
+        }
+
+        .count {
+            margin-right: 20px;
+        }
+
+        .greetings p {
+            background-color: white;
+            color: black;
+            border-radius: 15px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .reminder {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #7b55d3;
+            border-radius: 20%;
+            padding: 20px;
+            padding-bottom: 150px;
+            position: relative;
+            top: -60px;
+            color: white;
+        }
+
+        a {
+            color: #7b55d3;
+            cursor: pointer;
+        }
+
+        input {
+            border-radius: 10px;
+            width: 75%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            border-radius: 10px;
+            padding: 10px;
+            width: 75px;
+            background-color: #7b55d3;
+            color: white;
+        }
+
+        .upcoming-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10%;
+            position: relative;
+            top: -50px;
+        }
+
+        .upcoming {
+            text-align: left;
+            padding: 20px;
+        }
+
+
+        .upcoming ul {
+            list-style-type: none;
+            padding: 0px;
+        }
+
+        .upcoming ul li {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100px;
+            border-radius: 10px;
+            padding: 10px 10px 10px 0px;
+            margin: 15px 0px;
+        }
+
+        .upcoming ul li:nth-child(odd) {
+            background-image: linear-gradient(to right, white, #87ceeb78); 
+        }
+
+        .upcoming ul li:nth-child(even) {
+            background-image: linear-gradient(to right, white, #a487e778); 
+        }
+
+        .item {
+            margin-right: 50px;
+        }
+
+        .item-todo {
+            display: flex;
+            flex-direction: column;
+            padding-left: 10px;
+            border-left: 3px solid #a487e7;
+
+        }
+
+        .item.todo {
+            font-size: 18px;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="greetings">
+            <div class="hello">
+                <h1>Hello, Coach Stephanie</h1>
+            </div>
+            
+        </div>
+        <div class="upcoming-container">
+            <div class="upcoming">
+                <h1>All of your completed tasks!</h1>
+                <ul>
+                    {% for t in todos %}
+                    <li>
+                        <div class="item-todo">
+                           {{t["todo"]}}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+</body>
+</html>
