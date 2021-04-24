@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
-from sense_hat import SenseHat 
+#from sense_hat import SenseHat 
 import sqlite3 
 from flask_apscheduler import APScheduler
 import time
 
 
-sense = SenseHat()
-sense.low_light = True
+#sense = SenseHat()
+#sense.low_light = True
 
 
 application = Flask(__name__)
@@ -105,7 +105,8 @@ def get_total_todos(curs, status):
     return count
 
 def give_reminder(todo):
-    sense.show_message(todo)
+    #sense.show_message(todo)
+    print(todo)
 
 if __name__ == '__main__':
     application.run(debug=True, host='0.0.0.0')
