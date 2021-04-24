@@ -10,3 +10,4 @@ responses==0.9.0
 RPi.GPIO==0.7.0
 sense-emu==1.1
 sense-hat==2.2.0
+gunicorn==20.0.4
