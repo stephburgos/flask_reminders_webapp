@@ -9,13 +9,13 @@ sense = SenseHat()
 sense.low_light = True
 
 
-app = Flask(__name__)
+application = Flask(__name__)
 scheduler = APScheduler()
-scheduler.init_app(app)
+scheduler.init_app(application)
 scheduler.start()
 
 
-@app.route('/', methods=['GET','POST'])
+@application.route('/', methods=['GET','POST'])
 def index():
     #connect to database
     conn = sqlite3.connect('./static/data/toDos.db')
@@ -38,7 +38,7 @@ def index():
     conn.close()
     return render_template('index.html', to_dos = todos, done=done)    
 
-@app.route('/reminder/<action>/<id>', methods=['GET','POST'])
+@application.route('/reminder/<action>/<id>', methods=['GET','POST'])
 def edit(action, id):
     #connect to database
     conn = sqlite3.connect('./static/data/toDos.db')
@@ -74,7 +74,7 @@ def edit(action, id):
     conn.close()
     return redirect(url_for('index'))
 
-@app.route('/completed')
+@application.route('/completed')
 def completed():
      #connect to database
     conn = sqlite3.connect('./static/data/toDos.db')
@@ -108,7 +108,7 @@ def give_reminder(todo):
     sense.show_message(todo)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    application.run(debug=True, host='0.0.0.0')
     
     
 
